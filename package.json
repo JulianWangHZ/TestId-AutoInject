@@ -1,0 +1,70 @@
+{
+  "name": "testid-autoinject",
+  "version": "0.1.0",
+  "description": "Zero-touch build-time injection of stable testID / data-test-id for React Native (Expo) and Next.js. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
+  "license": "MIT",
+  "author": "",
+  "main": "./dist/eslint/index.js",
+  "types": "./dist/eslint/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/eslint/index.d.ts",
+      "default": "./dist/eslint/index.js"
+    },
+    "./babel": {
+      "types": "./dist/babel-plugin.d.ts",
+      "default": "./dist/babel-plugin.js"
+    },
+    "./map": {
+      "types": "./dist/map/emit.d.ts",
+      "default": "./dist/map/emit.js"
+    }
+  },
+  "bin": {
+    "testid-scan": "./dist/cli/scan.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/**/*.test.ts",
+    "scan": "node --import tsx src/cli/scan.ts"
+  },
+  "keywords": [
+    "testid",
+    "data-test-id",
+    "babel-plugin",
+    "eslint-plugin",
+    "react-native",
+    "expo",
+    "nextjs",
+    "appium",
+    "playwright",
+    "automation",
+    "e2e",
+    "qa"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@babel/core": ">=7.0.0",
+    "eslint": ">=8.57.0"
+  },
+  "peerDependenciesMeta": {
+    "@babel/core": { "optional": true },
+    "eslint": { "optional": true }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/plugin-syntax-jsx": "^7.24.0",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^20.11.0",
+    "eslint": "^9.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}
