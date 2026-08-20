@@ -33,8 +33,10 @@ Add an unrelated element above it — the id does not change.
    name consistent. Autofixable.
 3. **CLI scanner** — report coverage on any directory without installing
    anything into the target project.
-4. **ID map export** — emit a `testid-map.json` (`id → file / element / label`)
-   for QA to look up selectors.
+4. **ID map export** (optional) — emit a `testid-map.json`
+   (`id → file / element / label`). Not a frontend deliverable and not required
+   to obtain ids — it's mainly for detecting id drift in CI. See
+   [Discovering ids](#discovering-ids).
 
 ## Install
 
@@ -106,6 +108,24 @@ export default [
 npx testid-scan ./src --platform web
 npx testid-scan ./app --platform native --attribute testID
 ```
+
+## Discovering ids
+
+Injected ids live in the **running app** — there is nothing the frontend has to
+hand over. QA (or a test-authoring agent) can read them with whatever tool fits
+their workflow; these are equivalent options, none is required:
+
+- **Appium Inspector** — inspect a native element and read its accessibility id.
+- **Browser DevTools** — inspect an element and read its `data-test-id`.
+- **Playwright codegen** — record interactions and let it emit locators.
+- **MCP live-grab** — an agent reads the live DOM / native tree and lists ids.
+- **`testid-map.json`** — an optional offline list, handy for CI drift checks.
+
+Because ids are stable and follow `{screen}-{label|element}-{type}`, they can
+often be predicted from the screen without inspecting anything.
+
+> Ids only exist in a `test` / `development` build — point your tooling at that,
+> not a production build.
 
 ## The one thing that still needs a human
 
