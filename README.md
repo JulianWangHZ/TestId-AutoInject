@@ -88,9 +88,26 @@ Restart Metro with a clean cache after changing Babel config: `expo start -c`.
 | `stripDirs` | `["src","app","screens","components","pages"]` | Leading path segments dropped from the screen slug. |
 | `emitMap` | `false` | Write an id → source map. |
 | `mapFile` | `<cwd>/testid-map.json` | Where to write the map. |
+| `cjkFallback` | `true` | Keep a non-ASCII label (CJK, …) verbatim as a readable fallback. Set `false` for ASCII-only ids. |
 
 Manual ids always win — an element that already has the attribute is left
 untouched, so you can override any generated id by hand.
+
+## Non-Latin UIs (CJK)
+
+Visible text on a Chinese/Japanese/Korean UI carries no ASCII signal, so the id
+name is chosen from the first meaningful source, in order:
+
+1. **English label attribute / text** — `aria-label`, `name`, static text.
+2. **English handler intent** — mined from `onClick` / `onChange` / `onSubmit`:
+   the call argument (`onClick={() => setDateType("today")}` → `today`), the
+   handler name (`onClick={handleSubmit}` → `submit`), or the receiver
+   (`onClick={datePicker.open}` → `date-picker`). This is where most CJK
+   buttons get a clean English id, because handlers are already named in English.
+3. **The label text itself**, preserved verbatim (`login-登入-button`) — readable
+   and stable. `data-test-id`, Appium ids, and Playwright locators accept Unicode.
+
+An id never degrades to a positional counter while any of these signals exist.
 
 ## ESLint (flat config)
 
