@@ -7,6 +7,7 @@ import type {
   Node,
 } from '@babel/types';
 import { deriveScreen, deriveBaseId } from './id/derive';
+import { deriveHandlerSignal } from './id/handler-signal';
 import { configureMapOutput, recordMapping } from './map/emit';
 
 export interface InjectOptions {
@@ -26,6 +27,11 @@ export interface InjectOptions {
   emitMap?: boolean;
   /** Where to write the map. Default `<cwd>/testid-map.json`. */
   mapFile?: string;
+  /**
+   * Keep a non-ASCII label (CJK, …) verbatim as a readable fallback when no
+   * English signal is found. Default true. Set false for ASCII-only ids.
+   */
+  cjkFallback?: boolean;
 }
 
 /** Interactive elements worth a stable selector, for both RN and web. */
@@ -173,8 +179,15 @@ export default function injectTestId({
                 ? (parent as JSXElement).children
                 : [];
             const label = findLabel(open, children);
+            const handlerSignal = deriveHandlerSignal(open);
 
-            const base = deriveBaseId({ screen, elementName: name, label });
+            const base = deriveBaseId({
+              screen,
+              elementName: name,
+              label,
+              handlerSignal,
+              cjkFallback: opts.cjkFallback,
+            });
             const seen = counts.get(base) ?? 0;
             counts.set(base, seen + 1);
             const id = seen === 0 ? base : `${base}-${seen + 1}`;
