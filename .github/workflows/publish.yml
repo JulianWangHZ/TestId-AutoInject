@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+# Tag a release (e.g. `git tag v0.2.0 && git push --tags`) to build the wasm on
+# CI and publish to npm. The wasm is bundled into the tarball, so consumers
+# install a prebuilt plugin and never need a Rust toolchain.
+jobs:
+  publish:
+    name: Build wasm + publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+      - run: npm ci
+      # `prepublishOnly` runs `npm run build && npm run build:swc`, so dist/ is
+      # complete (JS + freshly-built wasm) before packing.
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
