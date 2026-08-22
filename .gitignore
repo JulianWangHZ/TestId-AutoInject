@@ -3,3 +3,6 @@ dist/
 testid-map.json
 *.log
 .DS_Store
+
+# Rust / SWC plugin build artifacts (Cargo.lock is committed to pin versions)
+packages/*/target/

@@ -18,7 +18,8 @@
     "./map": {
       "types": "./dist/map/emit.d.ts",
       "default": "./dist/map/emit.js"
-    }
+    },
+    "./swc": "./dist/swc/plugin.wasm"
   },
   "bin": {
     "testid-scan": "./dist/cli/scan.js"
@@ -28,9 +29,12 @@
   ],
   "scripts": {
     "build": "tsc",
+    "build:swc": "cd packages/swc-plugin && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc.wasm ../../dist/swc/plugin.wasm",
+    "test:swc": "cd packages/swc-plugin && cargo test",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/**/*.test.ts",
-    "scan": "node --import tsx src/cli/scan.ts"
+    "scan": "node --import tsx src/cli/scan.ts",
+    "prepublishOnly": "npm run build && npm run build:swc"
   },
   "keywords": [
     "testid",
