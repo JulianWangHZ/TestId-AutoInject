@@ -1,0 +1,24 @@
+[package]
+name = "testid-autoinject-swc"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "SWC plugin engine for testid-autoinject — stable data-test-id / testID injection for Next.js 15+ (webpack & Turbopack), without opting out of SWC."
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Pinned to Next.js 15.5.x's host swc_core (see workspace.dependencies in
+# vercel/next.js@v15.5.9). swc_core 35.0.0 re-exports css_plugin_transform, which
+# swc_plugin_macro 1.1.1 dropped — pin the macro/proxy to the release-time pair.
+swc_core = { version = "=35.0.0", features = ["ecma_plugin_transform"] }
+swc_plugin_macro = "=1.1.0"
+swc_plugin_proxy = "=14.0.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# NOTE: intentionally NO [profile.release] lto/opt-level overrides here.
+# They can strip the wasm host-import symbols (__set_transform_result, …) and
+# break linking. The wasm size is fine without them.

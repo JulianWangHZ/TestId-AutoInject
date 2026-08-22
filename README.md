@@ -60,21 +60,31 @@ module.exports = function (api) {
 };
 ```
 
-### Next.js — `.babelrc`
+Restart Metro with a clean cache after changing Babel config: `expo start -c`.
 
-```json
-{
-  "presets": ["next/babel"],
-  "plugins": [
-    ["testid-autoinject/babel", { "platform": "web" }]
-  ]
-}
+### Next.js — SWC plugin (`next.config.ts`)
+
+Next.js 13+ compiles with SWC. Adding a `.babelrc` opts SWC out, which **breaks
+App Router Server Actions and `next/font`** on Next 15 — so use the SWC plugin
+engine instead. It runs *inside* SWC (nothing is disabled) and works on both
+webpack and Turbopack.
+
+```ts
+// next.config.ts
+const nextConfig = {
+  experimental: {
+    swcPlugins: [['testid-autoinject/swc', { platform: 'web' }]],
+  },
+};
+export default nextConfig;
 ```
 
-> Adding `.babelrc` opts Next.js out of SWC. Accepted tradeoff for one plugin
-> covering both platforms.
-
-Restart Metro with a clean cache after changing Babel config: `expo start -c`.
+> The SWC plugin is a WebAssembly module pinned to `swc_core 35.0.0`, matching
+> **Next.js 15.5.x**'s SWC host. For other Next.js versions, rebuild the wasm
+> against the matching `swc_core` — see [`packages/swc-plugin`](packages/swc-plugin)
+> and run `npm run build:swc`. The Babel engine above still covers React Native /
+> Expo (Metro uses Babel). Both engines share the same id-derivation logic, so
+> ids are identical across them.
 
 ## Babel options
 
