@@ -4,10 +4,6 @@ on:
   push:
     tags: ['v*']
 
-# Trusted Publishing (OIDC): GitHub Actions authenticates to npm with a
-# short-lived OIDC token — no long-lived NPM_TOKEN. Configure the trusted
-# publisher on npmjs.com (package → Settings → Trusted Publishing) with this
-# repo and workflow filename `publish.yml`. Provenance is generated automatically.
 permissions:
   contents: read
   id-token: write
@@ -25,8 +21,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-wasip1
-      # Trusted publishing (OIDC) requires npm 11.5.1+.
       - run: npm install -g npm@latest
       - run: npm ci
-      # No NODE_AUTH_TOKEN — npm authenticates via OIDC. prepublishOnly builds the wasm.
       - run: npm publish
