@@ -4,6 +4,12 @@
   "description": "Zero-touch build-time injection of stable testID / data-test-id for React Native (Expo) and Next.js. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
   "license": "MIT",
   "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianWangHZ/TestId-AutoInject.git"
+  },
+  "homepage": "https://github.com/JulianWangHZ/TestId-AutoInject#readme",
+  "bugs": "https://github.com/JulianWangHZ/TestId-AutoInject/issues",
   "main": "./dist/eslint/index.js",
   "types": "./dist/eslint/index.d.ts",
   "exports": {
