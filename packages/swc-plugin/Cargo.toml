@@ -3,7 +3,7 @@ name = "testid-autoinject-swc"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "SWC plugin engine for testid-autoinject — stable data-test-id / testID injection for Next.js 15+ (webpack & Turbopack), without opting out of SWC."
+description = "SWC plugin engine for testid-autoinject — stable data-testid / testID injection for Next.js 15+ (webpack & Turbopack), without opting out of SWC."
 publish = false
 
 [lib]

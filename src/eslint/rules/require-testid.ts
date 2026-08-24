@@ -12,7 +12,7 @@ export const requireTestid: Rule.RuleModule = {
     type: 'problem',
     docs: {
       description:
-        'require a testID / data-test-id on interactive elements not covered by auto-injection',
+        'require a testID / data-testid on interactive elements not covered by auto-injection',
     },
     schema: [
       {

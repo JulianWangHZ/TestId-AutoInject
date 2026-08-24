@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export interface Mapping {
-  /** The generated testID / data-test-id value. */
+  /** The generated testID / data-testid value. */
   id: string;
   /** Source file, relative to project root. */
   file: string;

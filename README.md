@@ -1,6 +1,6 @@
 # testid-autoinject
 
-Zero-touch, build-time injection of **stable** `testID` / `data-test-id` for
+Zero-touch, build-time injection of **stable** `testID` / `data-testid` for
 React Native (Expo) and Next.js.
 
 Frontend writes nothing. QA automation (Appium, Playwright, Detox, Maestro)
@@ -93,7 +93,7 @@ export default nextConfig;
 
 | Option | Default | Description |
 |---|---|---|
-| `platform` | `"web"` | `"native"` → `testID`; `"web"` → `data-test-id`. |
+| `platform` | `"web"` | `"native"` → `testID`; `"web"` → `data-testid`. |
 | `attribute` | from platform | Override the attribute name entirely. |
 | `envs` | `["test","development"]` | Only inject when `NODE_ENV` is one of these. |
 | `targets` | interactive set | Element names to inject on. |
@@ -118,7 +118,7 @@ name is chosen from the first meaningful source, in order:
    (`onClick={datePicker.open}` → `date-picker`). This is where most CJK
    buttons get a clean English id, because handlers are already named in English.
 3. **The label text itself**, preserved verbatim (`login-登入-button`) — readable
-   and stable. `data-test-id`, Appium ids, and Playwright locators accept Unicode.
+   and stable. `data-testid`, Appium ids, and Playwright locators accept Unicode.
 
 An id never degrades to a positional counter while any of these signals exist.
 
@@ -146,7 +146,7 @@ hand over. QA (or a test-authoring agent) can read them with whatever tool fits
 their workflow; these are equivalent options, none is required:
 
 - **Appium Inspector** — inspect a native element and read its accessibility id.
-- **Browser DevTools** — inspect an element and read its `data-test-id`.
+- **Browser DevTools** — inspect an element and read its `data-testid`.
 - **Playwright codegen** — record interactions and let it emit locators.
 - **MCP live-grab** — an agent reads the live DOM / native tree and lists ids.
 - **`testid-map.json`** — an optional offline list, handy for CI drift checks.

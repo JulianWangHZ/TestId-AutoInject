@@ -11,7 +11,7 @@ import { deriveHandlerSignal } from './id/handler-signal';
 import { configureMapOutput, recordMapping } from './map/emit';
 
 export interface InjectOptions {
-  /** `native` -> inject `testID`; `web` -> inject `data-test-id`. Default `web`. */
+  /** `native` -> inject `testID`; `web` -> inject `data-testid`. Default `web`. */
   platform?: 'native' | 'web';
   /** Override the attribute name entirely. */
   attribute?: string;
@@ -123,7 +123,7 @@ function findLabel(open: JSXOpeningElement, children: Node[]): string | null {
 }
 
 /**
- * Babel plugin: inject a stable testID / data-test-id onto interactive JSX
+ * Babel plugin: inject a stable testID / data-testid onto interactive JSX
  * elements at build time, so frontend code stays untouched and QA automation
  * (Appium, Playwright) gets deterministic selectors.
  *
@@ -145,7 +145,7 @@ export default function injectTestId({
 
         const attribute =
           opts.attribute ??
-          (opts.platform === 'native' ? 'testID' : 'data-test-id');
+          (opts.platform === 'native' ? 'testID' : 'data-testid');
         const targets = opts.injectAll
           ? null
           : new Set(opts.targets ?? DEFAULT_TARGETS);

@@ -1,5 +1,5 @@
 //! SWC plugin engine for testid-autoinject. Injects a stable
-//! `data-test-id` / `testID` onto interactive JSX elements at build time,
+//! `data-testid` / `testID` onto interactive JSX elements at build time,
 //! mirroring the Babel engine's id derivation. Works on Next.js 15+ (webpack &
 //! Turbopack) without opting out of SWC.
 
@@ -245,7 +245,7 @@ fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -> Pr
         if config.platform.as_deref() == Some("native") {
             "testID".to_string()
         } else {
-            "data-test-id".to_string()
+            "data-testid".to_string()
         }
     });
 
