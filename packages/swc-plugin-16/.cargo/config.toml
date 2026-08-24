@@ -1,0 +1,6 @@
+# SWC wasm plugins call host-provided functions (__set_transform_result,
+# __emit_diagnostics, …) that are undefined at link time and supplied by the
+# host at runtime. rust-lld must be told to allow them, or linking fails with
+# "undefined symbol". This is the single most important build setting.
+[target.wasm32-wasip1]
+rustflags = ["-C", "link-arg=--allow-undefined"]

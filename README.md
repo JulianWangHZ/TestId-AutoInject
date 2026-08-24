@@ -71,20 +71,23 @@ webpack and Turbopack.
 
 ```ts
 // next.config.ts
+import { swc } from 'testid-autoinject/swc';
+
 const nextConfig = {
   experimental: {
-    swcPlugins: [['testid-autoinject/swc', { platform: 'web' }]],
+    swcPlugins: [swc({ platform: 'web' })],
   },
 };
 export default nextConfig;
 ```
 
-> The SWC plugin is a WebAssembly module pinned to `swc_core 35.0.0`, matching
-> **Next.js 15.5.x**'s SWC host. For other Next.js versions, rebuild the wasm
-> against the matching `swc_core` — see [`packages/swc-plugin`](packages/swc-plugin)
-> and run `npm run build:swc`. The Babel engine above still covers React Native /
-> Expo (Metro uses Babel). Both engines share the same id-derivation logic, so
-> ids are identical across them.
+> `swc()` picks the wasm that matches your Next.js version automatically:
+> `plugin-16.wasm` (`swc_core 54`) for **Next 16+**, or `plugin-15.wasm`
+> (`swc_core 35`) for **Next 15.5.x** — the wasm's swc_core must match the host's
+> or Next throws `failed to invoke plugin`. Both ship prebuilt in the package, so
+> consumers need no Rust toolchain. The Babel engine above still covers React
+> Native / Expo (Metro uses Babel). All engines share the same id-derivation
+> logic, so ids are identical across them.
 
 ## Babel options
 

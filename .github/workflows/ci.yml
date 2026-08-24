@@ -29,12 +29,20 @@ jobs:
           targets: wasm32-wasip1
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: packages/swc-plugin
-      # Native tests assert the Rust id logic matches the Babel engine.
-      - name: cargo test
+          workspaces: |
+            packages/swc-plugin
+            packages/swc-plugin-16
+      # 15.x engine (swc_core 35): id cross-check + wasm link.
+      - name: cargo test (swc 15)
         working-directory: packages/swc-plugin
         run: cargo test
-      # Ensure the wasm links (proves the --allow-undefined flag + version pins).
-      - name: build wasm
+      - name: build wasm (swc 15)
         working-directory: packages/swc-plugin
+        run: cargo build --release --target wasm32-wasip1
+      # 16+ engine (swc_core 54): same, adapted to the newer AST API.
+      - name: cargo test (swc 16)
+        working-directory: packages/swc-plugin-16
+        run: cargo test
+      - name: build wasm (swc 16)
+        working-directory: packages/swc-plugin-16
         run: cargo build --release --target wasm32-wasip1
