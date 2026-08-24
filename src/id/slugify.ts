@@ -17,7 +17,7 @@ export function slugify(input: string): string {
  *
  * Used only as a readable *fallback*: when a label carries no English signal, a
  * Chinese-only button ("登入") yields a stable, meaningful `login-登入-button`
- * instead of degrading to a positional `login-button-2`. `data-test-id`,
+ * instead of degrading to a positional `login-button-2`. `data-testid`,
  * Appium accessibility ids, and Playwright locators all accept Unicode.
  */
 export function slugifyUnicode(input: string): string {

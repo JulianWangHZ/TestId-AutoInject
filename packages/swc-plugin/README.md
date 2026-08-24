@@ -1,7 +1,7 @@
 # testid-autoinject SWC plugin
 
 The SWC engine for [testid-autoinject](../../README.md). A Rust → WebAssembly
-SWC plugin that injects stable `data-test-id` / `testID` onto interactive JSX at
+SWC plugin that injects stable `data-testid` / `testID` onto interactive JSX at
 build time — the same ids the Babel engine produces, but running *inside* SWC so
 it works on **Next.js 15+ with webpack and Turbopack** without opting SWC out.
 

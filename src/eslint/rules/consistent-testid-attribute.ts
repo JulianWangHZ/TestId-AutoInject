@@ -3,7 +3,7 @@ import { getAttrName } from '../../utils/jsx';
 
 /**
  * Rename off-convention testid attributes to the canonical one. Autofixable.
- * e.g. `data-testid` / `data-cy` -> `data-test-id`.
+ * e.g. `data-testid` / `data-cy` -> `data-testid`.
  */
 export const consistentTestidAttribute: Rule.RuleModule = {
   meta: {
@@ -31,7 +31,7 @@ export const consistentTestidAttribute: Rule.RuleModule = {
       attribute?: string;
       forbidden?: string[];
     };
-    const canonical = opt.attribute ?? 'data-test-id';
+    const canonical = opt.attribute ?? 'data-testid';
     const forbidden = new Set(
       opt.forbidden ?? ['data-testid', 'data-test', 'data-cy', 'testid']
     );

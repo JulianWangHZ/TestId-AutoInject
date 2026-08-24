@@ -20,7 +20,7 @@ const plugin: ESLint.Plugin = {
 export function recommended(
   platform: 'native' | 'web' = 'web'
 ): Linter.Config {
-  const attribute = platform === 'native' ? 'testID' : 'data-test-id';
+  const attribute = platform === 'native' ? 'testID' : 'data-testid';
   return {
     name: `testid-autoinject/recommended-${platform}`,
     plugins: { testid: plugin },

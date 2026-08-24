@@ -65,9 +65,9 @@ test('duplicate bases get a deterministic numeric suffix', () => {
   assert.match(out, /testID="login-go-button-2"/);
 });
 
-test('web platform injects data-test-id', () => {
+test('web platform injects data-testid', () => {
   const out = transform(`<button>Go</button>`, { platform: 'web' }, 'app/checkout/page.tsx');
-  assert.match(out, /data-test-id="checkout-go-button"/);
+  assert.match(out, /data-testid="checkout-go-button"/);
 });
 
 test('CJK label with handler: English intent from the handler wins', () => {
@@ -76,14 +76,14 @@ test('CJK label with handler: English intent from the handler wins', () => {
     { platform: 'web' },
     'src/features/home/SearchArea/index.tsx'
   );
-  assert.match(out, /data-test-id="features-home-search-area-today-button"/);
+  assert.match(out, /data-testid="features-home-search-area-today-button"/);
 });
 
 test('CJK label without a usable handler: text kept verbatim, not positional', () => {
   const out = transform(`<button>登入</button>`, { platform: 'web' }, 'app/login/page.tsx');
   // Babel escapes non-ASCII in generated source; the injected attribute value
   // is `login-登入-button` (readable in the DOM), serialized here as \uXXXX.
-  assert.match(out, /data-test-id="login-\\u767B\\u5165-button"/);
+  assert.match(out, /data-testid="login-\\u767B\\u5165-button"/);
 });
 
 test('CJK labels stay stable across sibling insertion (no positional drift)', () => {
@@ -97,15 +97,15 @@ test('CJK labels stay stable across sibling insertion (no positional drift)', ()
     { platform: 'web' },
     'app/home/page.tsx'
   );
-  assert.match(a, /data-test-id="home-date-picker-button"/);
-  assert.match(b, /data-test-id="home-date-picker-button"/);
+  assert.match(a, /data-testid="home-date-picker-button"/);
+  assert.match(b, /data-testid="home-date-picker-button"/);
 });
 
 test('cjkFallback=false: CJK-only label reverts to element name', () => {
   const out = transform(`<button>登入</button>`, { platform: 'web', cjkFallback: false }, 'app/login/page.tsx');
   // Id drops the CJK text entirely; the visible child text is untouched.
-  assert.match(out, /data-test-id="login-button-button"/);
-  assert.doesNotMatch(out, /data-test-id="[^"]*(登入|\\u767B)[^"]*"/);
+  assert.match(out, /data-testid="login-button-button"/);
+  assert.doesNotMatch(out, /data-testid="[^"]*(登入|\\u767B)[^"]*"/);
 });
 
 test('does nothing when NODE_ENV is not in envs', () => {
