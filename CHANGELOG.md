@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.2.0...v0.3.0) (2026-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* the default web attribute is now `data-testid` instead of `data-test-id`. Existing selectors targeting `data-test-id` will break unless pinned via the `attribute` option.
+
+### Features
+
+* rename default web attribute to data-testid ([#9](https://github.com/JulianWangHZ/TestId-AutoInject/issues/9)) ([9ffe88a](https://github.com/JulianWangHZ/TestId-AutoInject/commit/9ffe88ac13c4b003faeb357b1a15209d3bdc5332))
+
 ## [0.2.0]
 
 ### Added
