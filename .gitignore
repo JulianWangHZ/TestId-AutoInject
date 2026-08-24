@@ -6,3 +6,6 @@ testid-map.json
 
 # Rust / SWC plugin build artifacts (Cargo.lock is committed to pin versions)
 packages/*/target/
+
+# Playwright MCP scratch (snapshots, console logs)
+.playwright-mcp/

@@ -1,6 +1,6 @@
 {
   "name": "testid-autoinject",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Zero-touch build-time injection of stable testID / data-test-id for React Native (Expo) and Next.js. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
   "license": "MIT",
   "author": "",
@@ -19,7 +19,10 @@
       "types": "./dist/map/emit.d.ts",
       "default": "./dist/map/emit.js"
     },
-    "./swc": "./dist/swc/plugin.wasm"
+    "./swc": {
+      "types": "./dist/swc/index.d.ts",
+      "default": "./dist/swc/index.js"
+    }
   },
   "bin": {
     "testid-scan": "./dist/cli/scan.js"
@@ -29,8 +32,10 @@
   ],
   "scripts": {
     "build": "tsc",
-    "build:swc": "cd packages/swc-plugin && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc.wasm ../../dist/swc/plugin.wasm",
-    "test:swc": "cd packages/swc-plugin && cargo test",
+    "build:swc": "npm run build:swc15 && npm run build:swc16",
+    "build:swc15": "cd packages/swc-plugin && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc.wasm ../../dist/swc/plugin-15.wasm",
+    "build:swc16": "cd packages/swc-plugin-16 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16.wasm ../../dist/swc/plugin-16.wasm",
+    "test:swc": "cd packages/swc-plugin && cargo test && cd ../swc-plugin-16 && cargo test",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "scan": "node --import tsx src/cli/scan.ts",
