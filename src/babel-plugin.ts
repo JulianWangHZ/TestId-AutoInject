@@ -192,7 +192,13 @@ export default function injectTestId({
             counts.set(base, seen + 1);
             const id = seen === 0 ? base : `${base}-${seen + 1}`;
 
-            open.attributes.push(
+            // Insert at the front, not the back: a later attribute wins in JSX,
+            // so an injected value pushed after a `{...props}` spread would
+            // silently override a testID the caller passed through that spread.
+            // We cannot statically know what a spread contains, so we place the
+            // injected value first and let any explicit or spread attribute
+            // override it — hand-written values win in every case.
+            open.attributes.unshift(
               t.jsxAttribute(t.jsxIdentifier(attribute), t.stringLiteral(id))
             );
 
