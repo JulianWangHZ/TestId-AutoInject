@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.0...v0.3.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* stop consistent-testid-attribute flagging the canonical name ([#13](https://github.com/JulianWangHZ/TestId-AutoInject/issues/13)) ([fb6cca7](https://github.com/JulianWangHZ/TestId-AutoInject/commit/fb6cca74f0d3cfd38ca99043503ce3f264cd2f0a))
+
 ## [0.3.0](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.2.0...v0.3.0) (2026-08-24)
 
 

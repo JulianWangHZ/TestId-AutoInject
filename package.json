@@ -1,6 +1,6 @@
 {
   "name": "testid-autoinject",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Zero-touch build-time injection of stable testID / data-testid for React Native (Expo) and Next.js. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
   "license": "MIT",
   "author": "",
