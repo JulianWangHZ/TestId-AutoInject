@@ -217,7 +217,13 @@ impl VisitMut for Injector {
             format!("{}-{}", base, seen + 1)
         };
 
-        el.opening.attrs.push(new_attr(&self.attribute, &id));
+        // Insert at the front, not the back: a later attribute wins in JSX, so
+        // an injected value pushed after a `{...props}` spread would silently
+        // override a testID the caller passed through that spread. We cannot
+        // statically know what a spread contains, so we place the injected value
+        // first and let any explicit or spread attribute override it —
+        // hand-written values win in every case.
+        el.opening.attrs.insert(0, new_attr(&self.attribute, &id));
     }
 }
 
@@ -285,4 +291,80 @@ fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -> Pr
     };
     program.visit_mut_with(&mut injector);
     program
+}
+
+#[cfg(test)]
+mod transform_tests {
+    use super::*;
+    use swc_core::ecma::ast::{Ident, SpreadElement};
+
+    fn text_input(attrs: Vec<JSXAttrOrSpread>) -> JSXElement {
+        JSXElement {
+            span: DUMMY_SP,
+            opening: JSXOpeningElement {
+                name: JSXElementName::Ident(Ident::new_no_ctxt("TextInput".into(), DUMMY_SP)),
+                span: DUMMY_SP,
+                attrs,
+                self_closing: true,
+                type_args: None,
+            },
+            children: vec![],
+            closing: None,
+        }
+    }
+
+    fn spread(name: &str) -> JSXAttrOrSpread {
+        JSXAttrOrSpread::SpreadElement(SpreadElement {
+            dot3_token: DUMMY_SP,
+            expr: Box::new(Expr::Ident(Ident::new_no_ctxt(name.into(), DUMMY_SP))),
+        })
+    }
+
+    fn inject(el: &mut JSXElement) {
+        let mut injector = Injector {
+            attribute: "testID".to_string(),
+            targets: Some(HashSet::from(["TextInput".to_string()])),
+            screen: "login".to_string(),
+            cjk_fallback: true,
+            counts: HashMap::new(),
+        };
+        injector.visit_mut_jsx_element(el);
+    }
+
+    // A caller may pass testID through `{...props}`. Since a later JSX attribute
+    // wins, the injected value must come BEFORE the spread — otherwise it would
+    // silently clobber the caller's testID.
+    #[test]
+    fn injected_value_is_placed_before_a_spread() {
+        let mut el = text_input(vec![spread("props")]);
+        inject(&mut el);
+
+        let attrs = &el.opening.attrs;
+        assert_eq!(attrs.len(), 2, "spread must be preserved alongside the injection");
+        assert!(
+            matches!(&attrs[0], JSXAttrOrSpread::JSXAttr(a) if attr_name_eq(&a.name, "testID")),
+            "injected testID must be the first attribute"
+        );
+        assert!(
+            matches!(&attrs[1], JSXAttrOrSpread::SpreadElement(_)),
+            "the spread must follow the injected value so it can override it"
+        );
+    }
+
+    // A literal attribute still short-circuits injection: hand-written value wins.
+    #[test]
+    fn manual_attr_short_circuits_injection() {
+        let mut el = text_input(vec![new_attr("testID", "manual")]);
+        inject(&mut el);
+
+        let attrs = &el.opening.attrs;
+        assert_eq!(attrs.len(), 1, "no injection when a literal testID exists");
+        match &attrs[0] {
+            JSXAttrOrSpread::JSXAttr(a) => {
+                assert!(attr_name_eq(&a.name, "testID"));
+                assert_eq!(string_attr_value(a).as_deref(), Some("manual"));
+            }
+            _ => panic!("expected the manual attr to survive untouched"),
+        }
+    }
 }

@@ -41,6 +41,18 @@ test('manual testID always wins (not overwritten)', () => {
   assert.doesNotMatch(out, /login-submit-button/);
 });
 
+test('injected value is placed before a spread so the spread can override it', () => {
+  // A caller may pass testID through `{...props}`. Since a later JSX attribute
+  // wins, the injected value must come BEFORE the spread — otherwise it would
+  // silently clobber the caller's testID.
+  const out = transform(`<TextInput {...props} />`);
+  const testIdIdx = out.indexOf('testID=');
+  const spreadIdx = out.indexOf('...props');
+  assert.ok(testIdIdx !== -1, 'expected an injected testID');
+  assert.ok(spreadIdx !== -1, 'expected the spread to be preserved');
+  assert.ok(testIdIdx < spreadIdx, 'injected testID must come before the spread');
+});
+
 test('non-target elements are skipped by default', () => {
   const out = transform(`<View><Text>hi</Text></View>`);
   assert.doesNotMatch(out, /testID/);
