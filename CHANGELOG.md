@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.1...v0.3.2) (2026-08-26)
+
+
+### Bug Fixes
+
+* inject testID before spread so caller values win ([#15](https://github.com/JulianWangHZ/TestId-AutoInject/issues/15)) ([2b2e5e1](https://github.com/JulianWangHZ/TestId-AutoInject/commit/2b2e5e17f1954020993dad5e378d0aa40606864f))
+
 ## [0.3.1](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.0...v0.3.1) (2026-08-26)
 
 
