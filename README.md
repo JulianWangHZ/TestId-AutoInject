@@ -62,6 +62,27 @@ module.exports = function (api) {
 
 Restart Metro with a clean cache after changing Babel config: `expo start -c`.
 
+> **EAS builds set `NODE_ENV=production`.** Every EAS build — `development`,
+> `preview`, *and* `production` profiles — runs Babel with `NODE_ENV=production`,
+> which is **not** in the default `envs` (`["test","development"]`). So with the
+> default config, ids are injected only on your local dev server and silently
+> **not** in any EAS build. If your QA automation runs against an EAS build, add
+> the environment explicitly:
+>
+> ```js
+> ['testid-autoinject/babel', { platform: 'native', envs: ['test', 'development', 'production'] }]
+> ```
+>
+> To keep ids out of your store release, gate on a signal you control instead of
+> `NODE_ENV` — e.g. a custom env var set only for QA/preview builds:
+>
+> ```js
+> // eas.json build profile: "env": { "TESTID": "1" }
+> const plugins = process.env.TESTID
+>   ? [['testid-autoinject/babel', { platform: 'native', envs: ['production'] }]]
+>   : [];
+> ```
+
 ### Next.js — SWC plugin (`next.config.ts`)
 
 Next.js 13+ compiles with SWC. Adding a `.babelrc` opts SWC out, which **breaks
@@ -157,12 +178,112 @@ often be predicted from the screen without inspecting anything.
 > Ids only exist in a `test` / `development` build — point your tooling at that,
 > not a production build.
 
+## Locating elements in tests
+
+The injected ids are ordinary selectors. Point your automation at the same
+attribute the plugin wrote (`data-testid` on web, `testID` on native).
+
+### Playwright (web — `data-testid`)
+
+`getByTestId` resolves `data-testid` by default, so it matches the plugin's web
+output with no extra config:
+
+```ts
+import { test, expect } from '@playwright/test';
+
+test('submits the checkout form', async ({ page }) => {
+  await page.goto('/checkout');
+
+  // id shape: {screen}-{label|element}-{type}
+  await page.getByTestId('checkout-email-input').fill('qa@example.com');
+  await page.getByTestId('checkout-go-button').click();
+
+  await expect(page.getByTestId('checkout-success-text')).toBeVisible();
+});
+```
+
+> Using a different attribute (e.g. you set `attribute: 'data-qa'`)? Tell
+> Playwright once in `playwright.config.ts`:
+> `use: { testIdAttribute: 'data-qa' }`.
+
+### Appium + WebdriverIO (native — `testID`)
+
+React Native maps `testID` to the iOS **accessibility identifier** and the
+Android **`resource-id`**. The portable selector is the accessibility-id form
+(`~id`); it works as-is on iOS and on Android once the id reaches the native
+tree:
+
+```ts
+import { remote } from 'webdriverio';
+
+const driver = await remote({
+  capabilities: {
+    platformName: 'iOS', // or 'Android'
+    'appium:automationName': 'XCUITest', // 'UiAutomator2' on Android
+    'appium:app': '/path/to/app',
+  },
+});
+
+// `~` is the accessibility-id selector — matches the injected testID.
+await driver.$('~login-email-input').setValue('qa@example.com');
+await driver.$('~login-submit-button').click();
+
+await driver.$('~login-success-text').waitForDisplayed();
+await driver.deleteSession();
+```
+
+> **Android fallback.** If `~id` does not match, the id likely arrived as a
+> `resource-id` instead of a content-desc. Match it explicitly:
+>
+> ```ts
+> await driver.$('android=new UiSelector().resourceId("login-submit-button")').click();
+> ```
+>
+> This is the same forwarding issue described below — a wrapper component that
+> drops `testID` before the native element will be invisible to either selector.
+
 ## The one thing that still needs a human
 
 Custom wrapper components must **forward** the injected attribute to the
 underlying native element, or Appium won't see it in the native tree. This is a
 one-time fix per shared component — the `require-testid` rule flags where it's
 needed.
+
+## Lists: rows share one id
+
+Injection is a **build-time** transform, so a `.map()` — one JSX node in source —
+gets one literal id, and every rendered row shares it:
+
+```tsx
+// source
+items.map((it) => <Button onPress={() => go(it)}>{it.name}</Button>)
+
+// after the plugin — the SAME id on every row
+items.map((it) => <Button testID="orders-list-go-button" onPress={() => go(it)}>{it.name}</Button>)
+```
+
+This is not fixable at build time: per-row uniqueness lives in runtime data
+(`it.id`), which the AST cannot see. Two ways to handle it:
+
+1. **Scope the shared id at test time** — anchor to the row, then find the
+   control inside it (no app change):
+
+   ```ts
+   // Playwright — scope by row content
+   const row = page.getByRole('listitem').filter({ hasText: 'Order #42' });
+   await row.getByTestId('orders-list-go-button').click();
+
+   // …or by position
+   await page.getByTestId('orders-list-go-button').nth(2).click();
+   // Appium/WebdriverIO: (await driver.$$('~orders-list-go-button'))[2].click()
+   ```
+
+2. **Set a per-row id by hand** when you need a stable unique selector. Manual
+   ids always win, so the plugin leaves it alone:
+
+   ```tsx
+   items.map((it) => <Button testID={`orders-list-go-${it.id}`} onPress={() => go(it)}>{it.name}</Button>)
+   ```
 
 ## License
 
