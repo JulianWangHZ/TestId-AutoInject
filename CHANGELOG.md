@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.2...v0.3.3) (2026-08-28)
+
+
+### Bug Fixes
+
+* normalize swc wasm path for Turbopack on Windows ([#20](https://github.com/JulianWangHZ/TestId-AutoInject/issues/20)) ([3eea4e3](https://github.com/JulianWangHZ/TestId-AutoInject/commit/3eea4e3620022a704ae7d0bb0c2a5fc887238d9b))
+
 ## [0.3.2](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.1...v0.3.2) (2026-08-26)
 
 
