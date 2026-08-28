@@ -28,7 +28,9 @@
     "./swc": {
       "types": "./dist/swc/index.d.ts",
       "default": "./dist/swc/index.js"
-    }
+    },
+    "./swc/plugin-15.wasm": "./dist/swc/plugin-15.wasm",
+    "./swc/plugin-16.wasm": "./dist/swc/plugin-16.wasm"
   },
   "bin": {
     "testid-scan": "./dist/cli/scan.js"

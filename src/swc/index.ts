@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-export interface SwcOptions {
+// Type alias (not interface) so it stays assignable to Next's Record swcPlugins type.
+export type SwcOptions = {
   platform?: 'web' | 'native';
   attribute?: string;
   envs?: string[];
@@ -9,7 +10,7 @@ export interface SwcOptions {
   injectAll?: boolean;
   stripDirs?: string[];
   cjkFallback?: boolean;
-}
+};
 
 /** Detect the consuming project's Next.js major version, or 0 if unknown. */
 function detectNextMajor(): number {
@@ -35,5 +36,7 @@ function detectNextMajor(): number {
  */
 export function swc(options: SwcOptions = {}): [string, SwcOptions] {
   const file = detectNextMajor() >= 16 ? 'plugin-16.wasm' : 'plugin-15.wasm';
-  return [path.join(__dirname, file), options];
+  // Turbopack can't resolve a backslash-separated path; normalize for Windows.
+  const wasmPath = path.join(__dirname, file).replace(/\\/g, '/');
+  return [wasmPath, options];
 }
