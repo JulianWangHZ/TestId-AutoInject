@@ -153,6 +153,36 @@ export default [
 ];
 ```
 
+### Spread-bearing elements and `allowSpread`
+
+`require-testid` defaults to `allowSpread: true`, so it skips any element
+carrying a `{...props}` spread — on the assumption the spread may already supply
+the attribute. The injector makes no such assumption: it injects into those
+elements anyway. So a clean lint run does **not** guarantee the output is free of
+generated ids, and a shared spread-bearing component renders the *same* id at
+every call site — a strict-mode violation for Playwright that the lint output
+never points at.
+
+If you want a green lint to mean "no generated ids slipped through", override the
+rule with `allowSpread: false` after the preset:
+
+```js
+import { recommended } from 'testid-autoinject';
+
+export default [
+  recommended('web'),
+  {
+    rules: {
+      'testid/require-testid': ['warn', { attribute: 'data-testid', allowSpread: false }],
+    },
+  },
+];
+```
+
+This surfaces every spread-bearing target that lacks an explicit id, including
+shared wrappers and cases where a `{...register(...)}`-style spread would
+otherwise hide an injected id overriding one the component computes internally.
+
 ## CLI
 
 ```bash
