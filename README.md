@@ -6,6 +6,14 @@ React Native (Expo) and Next.js.
 Frontend writes nothing. QA automation (Appium, Playwright, Detox, Maestro)
 gets deterministic selectors that survive refactors.
 
+## Demo
+
+Next.js — stable `data-testid` injected at build time, no source changes:
+
+<video src="https://github.com/JulianWangHZ/TestId-AutoInject/raw/main/assets/nextjs-demo.mp4" controls muted loop width="800"></video>
+
+> If the player doesn't load, [watch the demo](https://github.com/JulianWangHZ/TestId-AutoInject/raw/main/assets/nextjs-demo.mp4).
+
 ## Why
 
 Manually adding test ids is a recurring tax: QA asks, frontend adds, repeat.
