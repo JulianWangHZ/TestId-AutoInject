@@ -10,9 +10,7 @@ gets deterministic selectors that survive refactors.
 
 Next.js — stable `data-testid` injected at build time, no source changes:
 
-<video src="https://github.com/JulianWangHZ/TestId-AutoInject/raw/main/assets/nextjs-demo.mp4" controls muted loop width="800"></video>
-
-> If the player doesn't load, [watch the demo](https://github.com/JulianWangHZ/TestId-AutoInject/raw/main/assets/nextjs-demo.mp4).
+https://github.com/user-attachments/assets/82bf7b57-7986-465e-9b3a-4dd5f5d48c12
 
 ## Why
 
