@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.4...v0.3.5) (2026-09-23)
+
+
+### Bug Fixes
+
+* **swc:** resolve wasm via package subpath so Turbopack can load it ([#28](https://github.com/JulianWangHZ/TestId-AutoInject/issues/28)) ([7b5e53d](https://github.com/JulianWangHZ/TestId-AutoInject/commit/7b5e53ddb2eb69ce81f84b55ff0e9ba5b8d9d9e4))
+
 ## [0.3.4](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.3...v0.3.4) (2026-09-23)
 
 
