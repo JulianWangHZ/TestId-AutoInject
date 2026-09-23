@@ -1,51 +1,65 @@
 /**
- * ESTree/JSX helpers for the ESLint rules. Kept dependency-light and typed as
- * `any` at the node level because the estree-jsx node shapes are provided by
- * the parser at lint time rather than a compile-time type.
+ * JSX AST helpers for the ESLint rules, typed structurally against the
+ * estree-jsx shapes we actually touch so we stay parser-agnostic without
+ * pulling in a types dependency.
  */
 
-export function getAttrName(attrNode: any): string | null {
-  if (!attrNode || attrNode.type !== 'JSXAttribute') return null;
-  const name = attrNode.name;
-  if (name.type === 'JSXIdentifier') return name.name;
-  if (name.type === 'JSXNamespacedName') {
-    return `${name.namespace.name}:${name.name.name}`;
-  }
-  return null;
+interface JSXIdentifier {
+  type: 'JSXIdentifier';
+  name: string;
 }
 
-export function getElementName(openingNode: any): string | null {
-  if (!openingNode || openingNode.type !== 'JSXOpeningElement') return null;
-  const name = openingNode.name;
-  if (name.type === 'JSXIdentifier') return name.name;
-
-  if (name.type === 'JSXMemberExpression') {
-    const parts: string[] = [];
-    let cur: any = name;
-    while (cur && cur.type === 'JSXMemberExpression') {
-      parts.unshift(cur.property.name);
-      cur = cur.object;
-    }
-    if (cur && cur.type === 'JSXIdentifier') parts.unshift(cur.name);
-    return parts.join('.');
-  }
-
-  if (name.type === 'JSXNamespacedName') {
-    return `${name.namespace.name}:${name.name.name}`;
-  }
-  return null;
+interface JSXNamespacedName {
+  type: 'JSXNamespacedName';
+  namespace: JSXIdentifier;
+  name: JSXIdentifier;
 }
 
-export function hasSpread(openingNode: any): boolean {
-  return (openingNode?.attributes ?? []).some(
-    (a: any) => a.type === 'JSXSpreadAttribute'
-  );
+interface JSXMemberExpression {
+  type: 'JSXMemberExpression';
+  object: JSXTagName;
+  property: JSXIdentifier;
 }
 
-export function findAttr(openingNode: any, attributeName: string): any | null {
-  for (const a of openingNode?.attributes ?? []) {
-    if (a.type !== 'JSXAttribute') continue;
-    if (getAttrName(a) === attributeName) return a;
+type JSXTagName = JSXIdentifier | JSXMemberExpression | JSXNamespacedName;
+
+export interface JSXAttribute {
+  type: 'JSXAttribute';
+  name: JSXIdentifier | JSXNamespacedName;
+}
+
+interface JSXSpreadAttribute {
+  type: 'JSXSpreadAttribute';
+}
+
+export interface JSXOpeningElement {
+  type: 'JSXOpeningElement';
+  name: JSXTagName;
+  attributes: Array<JSXAttribute | JSXSpreadAttribute>;
+}
+
+/** `Radio.Group` for member expressions, `svg:path` for namespaced names. */
+function tagNameToString(tag: JSXTagName): string {
+  switch (tag.type) {
+    case 'JSXIdentifier':
+      return tag.name;
+    case 'JSXNamespacedName':
+      return `${tag.namespace.name}:${tag.name.name}`;
+    case 'JSXMemberExpression':
+      return `${tagNameToString(tag.object)}.${tag.property.name}`;
   }
-  return null;
+}
+
+export function getAttrName(attr: JSXAttribute): string {
+  return attr.name.type === 'JSXIdentifier'
+    ? attr.name.name
+    : `${attr.name.namespace.name}:${attr.name.name.name}`;
+}
+
+export function getElementName(opening: JSXOpeningElement): string {
+  return tagNameToString(opening.name);
+}
+
+export function hasSpread(opening: JSXOpeningElement): boolean {
+  return opening.attributes.some((a) => a.type === 'JSXSpreadAttribute');
 }

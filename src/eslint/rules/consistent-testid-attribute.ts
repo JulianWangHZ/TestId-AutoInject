@@ -39,7 +39,7 @@ export const consistentTestidAttribute: Rule.RuleModule = {
     return {
       JSXAttribute(node: any) {
         const name = getAttrName(node);
-        if (!name || name === canonical || !forbidden.has(name)) return;
+        if (name === canonical || !forbidden.has(name)) return;
         context.report({
           node: node.name,
           messageId: 'rename',
