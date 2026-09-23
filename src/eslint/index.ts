@@ -1,6 +1,7 @@
 import type { ESLint, Linter } from 'eslint';
 import { requireTestid } from './rules/require-testid';
 import { consistentTestidAttribute } from './rules/consistent-testid-attribute';
+import { vueRequireTestid } from './rules/vue-require-testid';
 
 /**
  * ESLint plugin — the safety net beside the Babel auto-injector. Auto-injection
@@ -13,6 +14,7 @@ const plugin: ESLint.Plugin = {
   rules: {
     'require-testid': requireTestid,
     'consistent-testid-attribute': consistentTestidAttribute,
+    'vue-require-testid': vueRequireTestid,
   },
 };
 
@@ -31,5 +33,23 @@ export function recommended(
   };
 }
 
+/**
+ * Flat-config preset for `.vue` files. Requires `vue-eslint-parser`
+ * (loaded lazily so React-only consumers never touch it).
+ */
+export function recommendedVue(): Linter.Config {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const parser = require('vue-eslint-parser') as Linter.Parser;
+  return {
+    name: 'testid-autoinject/recommended-vue',
+    files: ['**/*.vue'],
+    plugins: { testid: plugin },
+    languageOptions: { parser },
+    rules: {
+      'testid/vue-require-testid': ['warn', { attribute: 'data-testid' }],
+    },
+  };
+}
+
 export default plugin;
-export { requireTestid, consistentTestidAttribute };
+export { requireTestid, consistentTestidAttribute, vueRequireTestid };
