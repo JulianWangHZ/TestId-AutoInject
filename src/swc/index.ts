@@ -24,10 +24,11 @@ function detectNextMajor(): number {
 }
 
 /**
- * Build the `[wasmPath, options]` tuple for `experimental.swcPlugins`, selecting
- * the wasm compiled against the host swc_core that matches the project's Next.js
- * version: `plugin-16.wasm` (swc_core 54) for Next 16+, else `plugin-15.wasm`
- * (swc_core 35) for Next 15.x. Defaults to the 15.x build when Next isn't found.
+ * Build the `[wasmSpecifier, options]` tuple for `experimental.swcPlugins`,
+ * selecting the wasm compiled against the host swc_core that matches the
+ * project's Next.js version: `plugin-16.wasm` (swc_core 54) for Next 16+, else
+ * `plugin-15.wasm` (swc_core 35) for Next 15.x. Defaults to the 15.x build when
+ * Next isn't found.
  *
  * ```ts
  * import { swc } from 'testid-autoinject/swc';
@@ -36,7 +37,7 @@ function detectNextMajor(): number {
  */
 export function swc(options: SwcOptions = {}): [string, SwcOptions] {
   const file = detectNextMajor() >= 16 ? 'plugin-16.wasm' : 'plugin-15.wasm';
-  // Turbopack can't resolve a backslash-separated path; normalize for Windows.
-  const wasmPath = path.join(__dirname, file).replace(/\\/g, '/');
-  return [wasmPath, options];
+  // Package subpath, not an absolute path: Turbopack resolves swcPlugins via
+  // module resolution and rejects filesystem paths (webpack accepts both).
+  return [`testid-autoinject/swc/${file}`, options];
 }
