@@ -1,7 +1,7 @@
 # testid-autoinject
 
 Zero-touch, build-time injection of **stable** `testID` / `data-testid` for
-React Native (Expo) and Next.js.
+React Native (Expo), Next.js, and Vue 3 (Vite / Nuxt).
 
 Frontend writes nothing. QA automation (Appium, Playwright, Detox, Maestro)
 gets deterministic selectors that survive refactors.
@@ -116,6 +116,61 @@ export default nextConfig;
 > Native / Expo (Metro uses Babel). All engines share the same id-derivation
 > logic, so ids are identical across them.
 
+### Vue 3 — Vite (`vite.config.ts`)
+
+Vue SFC templates are compiled by the Vue template compiler, not Babel/SWC, so
+the Vue engine plugs into the compiler's `nodeTransforms` hook. Sources stay
+untouched; the attribute exists only in compiled output:
+
+```ts
+// vite.config.ts
+import vue from '@vitejs/plugin-vue';
+import { vueTestId } from 'testid-autoinject/vue';
+
+export default {
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: { nodeTransforms: [vueTestId()] },
+      },
+    }),
+  ],
+};
+```
+
+Options mirror the Babel plugin (`envs`, `targets`, `injectAll`, `stripDirs`,
+`emitMap`, `cjkFallback`); the attribute defaults to `data-testid`. Id
+derivation is shared with the other engines, so
+`<button @click="handleSubmit">送出</button>` in `src/pages/login/index.vue`
+gets `login-submit-button` — same signals, same priority: label attribute /
+static text, then intent mined from `@click` / `@change` / `@submit`, then the
+CJK label verbatim.
+
+Notes:
+
+- **Manual values win.** A static `data-testid` or a bound `:data-testid`
+  (including one arriving through `v-bind="obj"`) overrides the injected value.
+- **Components get it too.** Injecting on a component relies on Vue's attribute
+  fallthrough to land the id on its root element; components with
+  `inheritAttrs: false` are covered by the ESLint safety net instead.
+- **SSR:** apply the transform to both server and client template compilers (in
+  Nuxt, set it in both `vite.vue.template.compilerOptions` sides), otherwise
+  hydration will warn about the mismatching attribute.
+- **`v-for` rows share one id** — same limitation as the other engines; see
+  [Lists](#lists-rows-share-one-id).
+
+### Nuxt 3 — `nuxt.config.ts`
+
+```ts
+import { vueTestId } from 'testid-autoinject/vue';
+
+export default defineNuxtConfig({
+  vue: {
+    compilerOptions: { nodeTransforms: [vueTestId()] },
+  },
+});
+```
+
 ## Babel options
 
 | Option | Default | Description |
@@ -158,6 +213,25 @@ export default [
   recommended('native'), // or 'web'
 ];
 ```
+
+### Vue templates
+
+`recommendedVue()` lints `<template>` blocks in `.vue` files (requires
+`vue-eslint-parser`):
+
+```js
+import { recommendedVue } from 'testid-autoinject';
+
+export default [
+  recommendedVue(),
+];
+```
+
+The `vue-require-testid` rule flags interactive elements missing the attribute
+— typically components with `inheritAttrs: false` that the compile-time
+injector's attribute fallthrough cannot reach. Its autofix inserts the same
+derived `{screen}-{label|element}-{type}` id the injector would produce, so
+fixed sources and injected builds agree on selectors.
 
 ### Spread-bearing elements and `allowSpread`
 

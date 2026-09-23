@@ -29,6 +29,10 @@
       "types": "./dist/swc/index.d.ts",
       "default": "./dist/swc/index.js"
     },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "default": "./dist/vue/index.js"
+    },
     "./swc/plugin-15.wasm": "./dist/swc/plugin-15.wasm",
     "./swc/plugin-16.wasm": "./dist/swc/plugin-16.wasm"
   },
@@ -57,6 +61,9 @@
     "react-native",
     "expo",
     "nextjs",
+    "vue",
+    "nuxt",
+    "vite",
     "appium",
     "playwright",
     "automation",
@@ -68,13 +75,17 @@
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
-    "eslint": ">=8.57.0"
+    "eslint": ">=8.57.0",
+    "vue-eslint-parser": ">=9.0.0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
       "optional": true
     },
     "eslint": {
+      "optional": true
+    },
+    "vue-eslint-parser": {
       "optional": true
     }
   },
@@ -83,9 +94,12 @@
     "@babel/plugin-syntax-jsx": "^7.24.0",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^20.11.0",
+    "@vue/compiler-core": "^3.5.43",
+    "@vue/compiler-dom": "^3.5.43",
     "eslint": "^9.0.0",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vue-eslint-parser": "^10.4.1"
   }
 }

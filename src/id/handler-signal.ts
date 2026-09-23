@@ -143,6 +143,36 @@ function fromExpression(expr: Expression): string | null {
   }
 }
 
+/**
+ * Mine an intent slug from raw handler source text (`handleSubmit`,
+ * `datePicker.open`, `() => setDateType('today')`). Template pipelines (Vue
+ * SFC) hand us the handler as an expression string rather than an AST, so this
+ * applies the same priority as the AST walk: string-literal call argument,
+ * then callee/receiver name, then a bare identifier.
+ */
+export function mineSignalFromSource(source: string): string | null {
+  const src = source.trim();
+  if (!src) return null;
+  // `setDateType('today')` -> the string argument names the intent.
+  const callWithString = src.match(/[\w$.]+\s*\(\s*['"`]([^'"`]*[A-Za-z][^'"`]*)['"`]/);
+  if (callWithString) {
+    const s = meaningful(slugify(callWithString[1]));
+    if (s) return s;
+  }
+  const call = src.match(/([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*\(/);
+  const target =
+    call?.[1] ?? src.match(/^([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)$/)?.[1];
+  if (!target) return null;
+  const parts = target.split('.');
+  if (parts.length > 1) {
+    // `datePicker.open` -> the receiver names the intent.
+    const s = meaningful(slugify(parts[0]));
+    if (s) return s;
+    return meaningful(slugify(stripHandlerPrefix(parts[parts.length - 1])));
+  }
+  return meaningful(slugify(stripHandlerPrefix(parts[0])));
+}
+
 export function deriveHandlerSignal(open: JSXOpeningElement): string | null {
   for (const key of HANDLER_ATTRS) {
     for (const a of open.attributes) {
