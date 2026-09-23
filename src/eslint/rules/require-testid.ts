@@ -42,7 +42,6 @@ export const requireTestid: Rule.RuleModule = {
     return {
       JSXOpeningElement(node: any) {
         const name = getElementName(node);
-        if (!name) return;
         const last = name.split('.').pop() as string;
         if (!targets.has(last) && !targets.has(name)) return;
         if (allowSpread && hasSpread(node)) return;
