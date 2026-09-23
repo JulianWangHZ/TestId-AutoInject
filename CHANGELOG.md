@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.3...v0.3.4) (2026-09-23)
+
+
+### Features
+
+* **vue:** compile-time data-testid injection for Vue 3 templates ([#26](https://github.com/JulianWangHZ/TestId-AutoInject/issues/26)) ([5e41c3e](https://github.com/JulianWangHZ/TestId-AutoInject/commit/5e41c3ea34eae3c065d2507cc45f44822dd75ace))
+
 ## [0.3.3](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.2...v0.3.3) (2026-08-28)
 
 
