@@ -7,10 +7,9 @@ import { swc, type SwcOptions } from '../src/swc';
 const _swcOptionsIsRecord: Record<string, unknown> = {} as SwcOptions;
 void _swcOptionsIsRecord;
 
-test('swc: returns a forward-slash wasm path (Turbopack-resolvable on Windows)', () => {
-  const [wasmPath] = swc();
-  assert.ok(!wasmPath.includes('\\'), `path must not contain backslashes: ${wasmPath}`);
-  assert.match(wasmPath, /\/swc\/plugin-1[56]\.wasm$/);
+test('swc: returns a package subpath specifier (Turbopack rejects filesystem paths)', () => {
+  const [wasmSpecifier] = swc();
+  assert.match(wasmSpecifier, /^testid-autoinject\/swc\/plugin-1[56]\.wasm$/);
 });
 
 test('swc: passes options through untouched as the second tuple element', () => {
