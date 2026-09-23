@@ -116,6 +116,12 @@ export default nextConfig;
 > Native / Expo (Metro uses Babel). All engines share the same id-derivation
 > logic, so ids are identical across them.
 
+> **Turbopack on Next 15:** during `next build --turbopack`, Next 15 reports
+> `development` (not `production`) as the env to SWC plugins, so an
+> `envs: ['production']` gate silently skips injection. Include
+> `'development'` in `envs` if you want injection in Turbopack production
+> builds on Next 15. Next 16 reports the env correctly.
+
 ### Vue 3 — Vite (`vite.config.ts`)
 
 Vue SFC templates are compiled by the Vue template compiler, not Babel/SWC, so
