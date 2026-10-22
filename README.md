@@ -274,7 +274,20 @@ otherwise hide an injected id overriding one the component computes internally.
 ```bash
 npx testid-scan ./src --platform web
 npx testid-scan ./app --platform native --attribute testID
+npx testid-scan ./src --json > testid-gaps.json
 ```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--platform native\|web` | `web` | Picks the default attribute (`testID` / `data-testid`). |
+| `--attribute <name>` | from platform | Check a different attribute. |
+| `--severity warn\|error` | preset level | Force one level for every rule. |
+| `--include-tests` | off | Also scan `*.test.*`, `*.spec.*`, `__tests__/`, `__mocks__/`. |
+| `--json` | off | Print the report as JSON for CI. |
+
+Exit code is `0` when clean or warnings only, `1` when any gap is at `error`
+level, and `2` for bad flags. Files the parser cannot read are listed as
+skipped rather than silently ignored.
 
 ## Discovering ids
 
