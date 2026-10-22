@@ -8,7 +8,11 @@ import type {
 } from '@babel/types';
 import { deriveScreen, deriveBaseId } from './id/derive';
 import { deriveHandlerSignal } from './id/handler-signal';
+import { DEFAULT_TARGETS } from './id/targets';
 import { configureMapOutput, recordMapping } from './map/emit';
+import { getAttrName, getElementName } from './utils/jsx';
+
+export { DEFAULT_TARGETS };
 
 export interface InjectOptions {
   /** `native` -> inject `testID`; `web` -> inject `data-testid`. Default `web`. */
@@ -34,26 +38,6 @@ export interface InjectOptions {
   cjkFallback?: boolean;
 }
 
-/** Interactive elements worth a stable selector, for both RN and web. */
-export const DEFAULT_TARGETS = [
-  'Button',
-  'Pressable',
-  'TouchableOpacity',
-  'TouchableHighlight',
-  'TouchableWithoutFeedback',
-  'TextInput',
-  'Input',
-  'Select',
-  'Switch',
-  'Checkbox',
-  'Radio',
-  'button',
-  'a',
-  'input',
-  'textarea',
-  'select',
-];
-
 /** Attributes, in priority order, that carry a human-meaningful label. */
 const LABEL_ATTRS = [
   'accessibilityLabel',
@@ -63,29 +47,6 @@ const LABEL_ATTRS = [
   'title',
   'name',
 ];
-
-function getElementName(open: JSXOpeningElement): string | null {
-  const n = open.name;
-  if (n.type === 'JSXIdentifier') return n.name;
-  if (n.type === 'JSXMemberExpression') {
-    const parts: string[] = [];
-    let cur: typeof n | typeof n.object = n;
-    while (cur.type === 'JSXMemberExpression') {
-      parts.unshift(cur.property.name);
-      cur = cur.object;
-    }
-    if (cur.type === 'JSXIdentifier') parts.unshift(cur.name);
-    return parts.join('.');
-  }
-  return null; // namespaced -> skip
-}
-
-function attrName(a: JSXAttribute): string | null {
-  const n = a.name;
-  if (n.type === 'JSXIdentifier') return n.name;
-  if (n.type === 'JSXNamespacedName') return `${n.namespace.name}:${n.name.name}`;
-  return null;
-}
 
 function stringAttrValue(a: JSXAttribute): string | null {
   const v = a.value;
@@ -103,14 +64,14 @@ function stringAttrValue(a: JSXAttribute): string | null {
 
 function hasAttr(open: JSXOpeningElement, name: string): boolean {
   return open.attributes.some(
-    (a) => a.type === 'JSXAttribute' && attrName(a) === name
+    (a) => a.type === 'JSXAttribute' && getAttrName(a) === name
   );
 }
 
 function findLabel(open: JSXOpeningElement, children: Node[]): string | null {
   for (const key of LABEL_ATTRS) {
     for (const a of open.attributes) {
-      if (a.type === 'JSXAttribute' && attrName(a) === key) {
+      if (a.type === 'JSXAttribute' && getAttrName(a) === key) {
         const s = stringAttrValue(a);
         if (s && s.trim()) return s.trim();
       }
@@ -164,8 +125,8 @@ export default function injectTestId({
         programPath.traverse({
           JSXOpeningElement(jsxPath) {
             const open = jsxPath.node;
+            if (open.name.type === 'JSXNamespacedName') return; // `svg:path` etc.
             const name = getElementName(open);
-            if (!name) return; // namespaced -> skip
             if (hasAttr(open, attribute)) return; // manual value wins
 
             if (targets) {

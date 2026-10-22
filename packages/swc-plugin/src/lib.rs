@@ -30,24 +30,20 @@ use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata
 use crate::derive::{derive_base_id, derive_screen, IdInput, DEFAULT_STRIP_DIRS};
 use crate::handler_signal::derive_handler_signal;
 
-/// Interactive elements worth a stable selector (RN + web).
+/// Elements that get an id by default, grouped by the kind of control they
+/// are. Must list the same names as `src/id/targets.ts`.
 const DEFAULT_TARGETS: &[&str] = &[
-    "Button",
-    "Pressable",
-    "TouchableOpacity",
-    "TouchableHighlight",
+    // press
+    "button", "Button", "Pressable", "TouchableHighlight", "TouchableOpacity",
     "TouchableWithoutFeedback",
-    "TextInput",
-    "Input",
-    "Select",
-    "Switch",
-    "Checkbox",
-    "Radio",
-    "button",
+    // text
+    "input", "Input", "TextInput", "textarea",
+    // choice
+    "select", "Select",
+    // toggle
+    "Checkbox", "Radio", "Switch",
+    // link
     "a",
-    "input",
-    "textarea",
-    "select",
 ];
 
 /// Attributes, in priority order, carrying a human-meaningful label.

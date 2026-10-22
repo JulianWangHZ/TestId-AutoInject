@@ -1,7 +1,8 @@
 /**
- * JSX AST helpers for the ESLint rules, typed structurally against the
- * estree-jsx shapes we actually touch so we stay parser-agnostic without
- * pulling in a types dependency.
+ * JSX AST helpers for the ESLint rules and the Babel injector, typed
+ * structurally against the JSX shapes we actually touch (estree-jsx and Babel
+ * agree on these) so we stay parser-agnostic without pulling in a types
+ * dependency.
  */
 
 interface JSXIdentifier {

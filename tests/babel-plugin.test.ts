@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { transformSync } from '@babel/core';
 import syntaxJsx from '@babel/plugin-syntax-jsx';
 
-import injectTestId, { InjectOptions } from '../src/babel-plugin';
+import injectTestId, { DEFAULT_TARGETS, InjectOptions } from '../src/babel-plugin';
 
 function transform(code: string, opts: InjectOptions = {}, filename = 'app/login/index.tsx'): string {
   const prev = process.env.NODE_ENV;
@@ -135,4 +135,33 @@ test('does nothing when NODE_ENV is not in envs', () => {
   } finally {
     process.env.NODE_ENV = prev;
   }
+});
+
+test('default targets: the interactive set is unchanged', () => {
+  assert.deepEqual(
+    [...DEFAULT_TARGETS].sort(),
+    [
+      'Button', 'Checkbox', 'Input', 'Pressable', 'Radio', 'Select', 'Switch',
+      'TextInput', 'TouchableHighlight', 'TouchableOpacity', 'TouchableWithoutFeedback',
+      'a', 'button', 'input', 'select', 'textarea',
+    ].sort()
+  );
+});
+
+test('dotted components match on their last segment', () => {
+  const out = transform(`<UI.Button>Save</UI.Button>`);
+  assert.match(out, /testID="login-save-button"/);
+});
+
+test('namespaced tags are never injected, even with injectAll', () => {
+  const out = transform(`<svg:path d="M0" />`, { injectAll: true });
+  assert.doesNotMatch(out, /testID=/);
+});
+
+test('a namespaced manual attribute is recognised as the attribute itself', () => {
+  const out = transform(`<Pressable xlink:href="x" accessibilityLabel="Go" />`, {
+    attribute: 'xlink:href',
+  });
+  assert.match(out, /xlink:href="x"/);
+  assert.doesNotMatch(out, /xlink:href="login/);
 });
