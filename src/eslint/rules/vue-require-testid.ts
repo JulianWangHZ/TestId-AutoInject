@@ -1,8 +1,9 @@
 import path from 'node:path';
 import type { Rule } from 'eslint';
-import { DEFAULT_TARGETS } from '../../babel-plugin';
 import { deriveScreen, deriveBaseId } from '../../id/derive';
 import { mineSignalFromSource } from '../../id/handler-signal';
+import { DEFAULT_TARGETS } from '../../id/targets';
+import { stringList, testidOptionsSchema } from './shared';
 
 const LABEL_ATTRS = ['aria-label', 'placeholder', 'title', 'label', 'name'];
 const HANDLER_EVENTS = ['click', 'change', 'submit', 'input'];
@@ -69,18 +70,11 @@ export const vueRequireTestid: Rule.RuleModule = {
       description:
         'require a data-testid on interactive elements in Vue templates',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          attribute: { type: 'string' },
-          targets: { type: 'array', items: { type: 'string' } },
-          stripDirs: { type: 'array', items: { type: 'string' } },
-          cjkFallback: { type: 'boolean' },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: testidOptionsSchema({
+      targets: stringList,
+      stripDirs: stringList,
+      cjkFallback: { type: 'boolean' },
+    }),
     messages: {
       missing: '<{{element}}> is missing {{attribute}}',
     },

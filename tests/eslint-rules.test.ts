@@ -122,3 +122,68 @@ test('require: allowSpread=false flags spread elements', () => {
   });
   assert.equal(msgs.length, 1);
 });
+
+// --- behaviour pinned before the shared-helpers refactor --------------------
+
+test('require: default attribute is testID', () => {
+  const msgs = lint(`const x = <Pressable />;`, 'require-testid');
+  assert.equal(msgs.length, 1);
+  assert.equal(msgs[0].message, '<Pressable> is missing testID');
+});
+
+test('require: dotted components match on the full name or the last segment', () => {
+  const opts = { attribute: 'testID' };
+  assert.equal(lint(`const x = <UI.Button />;`, 'require-testid', opts).length, 1);
+  assert.equal(lint(`const x = <UI.Card />;`, 'require-testid', opts).length, 0);
+  assert.equal(
+    lint(`const x = <Form.Field />;`, 'require-testid', { ...opts, targets: ['Form.Field'] }).length,
+    1
+  );
+});
+
+test('require: custom targets replace the defaults', () => {
+  const opts = { attribute: 'testID', targets: ['Card'] };
+  assert.equal(lint(`const x = <Card />;`, 'require-testid', opts).length, 1);
+  assert.equal(lint(`const x = <Button />;`, 'require-testid', opts).length, 0);
+});
+
+test('require: namespaced attribute names are matched exactly', () => {
+  const msgs = lint(`const x = <button qa:id="x" />;`, 'require-testid', { attribute: 'qa:id' });
+  assert.equal(msgs.length, 0);
+});
+
+test('require: unknown options are rejected by the schema', () => {
+  assert.throws(() => lint(`const x = <button />;`, 'require-testid', { nope: true }));
+});
+
+test('consistent: message text and fix target are the attribute name only', () => {
+  const msgs = lint(`const x = <button data-cy="go" />;`, 'consistent-testid-attribute');
+  assert.equal(msgs.length, 1);
+  assert.equal(msgs[0].message, 'Use "data-testid" instead of "data-cy"');
+  const out = fix(`const x = <button data-cy="go" />;`, 'consistent-testid-attribute').output;
+  assert.equal(out, `const x = <button data-testid="go" />;`);
+});
+
+test('consistent: custom forbidden list replaces the defaults', () => {
+  const opts = { attribute: 'testID', forbidden: ['qa-id'] };
+  assert.equal(lint(`const x = <View qa-id="a" />;`, 'consistent-testid-attribute', opts).length, 1);
+  assert.equal(lint(`const x = <View data-cy="a" />;`, 'consistent-testid-attribute', opts).length, 0);
+});
+
+test('consistent: native canonical leaves data-testid alone by default', () => {
+  const opts = { attribute: 'testID' };
+  assert.equal(lint(`const x = <View data-testid="a" />;`, 'consistent-testid-attribute', opts).length, 0);
+  assert.equal(lint(`const x = <View testid="a" />;`, 'consistent-testid-attribute', opts).length, 1);
+});
+
+test('consistent: every off-convention attribute on one element is reported in order', () => {
+  const msgs = lint(`const x = <b data-cy="a" data-test="b" />;`, 'consistent-testid-attribute');
+  assert.deepEqual(
+    msgs.map((m) => m.message),
+    ['Use "data-testid" instead of "data-cy"', 'Use "data-testid" instead of "data-test"']
+  );
+});
+
+test('consistent: unknown options are rejected by the schema', () => {
+  assert.throws(() => lint(`const x = <b />;`, 'consistent-testid-attribute', { nope: 1 }));
+});
