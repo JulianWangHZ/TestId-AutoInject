@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.5...v0.3.6) (2026-10-22)
+
+
+### Code Refactoring
+
+* **cli:** rebuild testid-scan on node:util parseArgs ([#31](https://github.com/JulianWangHZ/TestId-AutoInject/issues/31)) ([404015a](https://github.com/JulianWangHZ/TestId-AutoInject/commit/404015ae7da3e45b2a1ef566c0bbf890681faac3))
+
 ## [0.3.5](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.4...v0.3.5) (2026-09-23)
 
 
