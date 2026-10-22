@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.7](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.6...v0.3.7) (2026-10-22)
+
+
+### Code Refactoring
+
+* **babel:** share JSX helpers and one grouped target list ([#33](https://github.com/JulianWangHZ/TestId-AutoInject/issues/33)) ([8909538](https://github.com/JulianWangHZ/TestId-AutoInject/commit/8909538816b3615247ef7dbf50db5dc6e9d3d253))
+
 ## [0.3.6](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.5...v0.3.6) (2026-10-22)
 
 
