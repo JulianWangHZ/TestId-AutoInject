@@ -1,5 +1,14 @@
 import type { Rule } from 'eslint';
-import { getAttrName } from '../../utils/jsx';
+import { getAttrName, type JSXOpeningElement } from '../../utils/jsx';
+import { stringList, testidOptionsSchema } from './shared';
+
+/** Spellings other test tools and older conventions use for the same thing. */
+const KNOWN_ALIASES = ['data-cy', 'data-test', 'data-test-id', 'testid'];
+
+interface Options {
+  attribute?: string;
+  forbidden?: string[];
+}
 
 /**
  * Rename off-convention testid attributes to the canonical one. Autofixable.
@@ -12,42 +21,31 @@ export const consistentTestidAttribute: Rule.RuleModule = {
     docs: {
       description: 'enforce a single canonical testid attribute name',
     },
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          attribute: { type: 'string' },
-          forbidden: { type: 'array', items: { type: 'string' } },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: testidOptionsSchema({ forbidden: stringList }),
     messages: {
       rename: 'Use "{{canonical}}" instead of "{{found}}"',
     },
   },
   create(context) {
-    const opt = (context.options[0] ?? {}) as {
-      attribute?: string;
-      forbidden?: string[];
-    };
-    const canonical = opt.attribute ?? 'data-testid';
-    const forbidden = new Set(
-      opt.forbidden ?? ['data-test-id', 'data-test', 'data-cy', 'testid']
-    );
+    const { attribute: canonical = 'data-testid', forbidden = KNOWN_ALIASES }: Options =
+      context.options[0] ?? {};
+    // The canonical name is never an alias of itself, even if listed.
+    const aliases = new Set(forbidden.filter((name) => name !== canonical));
 
     return {
-      JSXAttribute(node: any) {
-        const name = getAttrName(node);
-        if (name === canonical || !forbidden.has(name)) return;
-        context.report({
-          node: node.name,
-          messageId: 'rename',
-          data: { canonical, found: name },
-          fix(fixer) {
-            return fixer.replaceText(node.name, canonical);
-          },
-        });
+      JSXOpeningElement(node: any) {
+        for (const attr of (node as JSXOpeningElement).attributes) {
+          if (attr.type !== 'JSXAttribute') continue;
+          const found = getAttrName(attr);
+          if (!aliases.has(found)) continue;
+          const nameNode = (attr as any).name;
+          context.report({
+            node: nameNode,
+            messageId: 'rename',
+            data: { canonical, found },
+            fix: (fixer) => fixer.replaceText(nameNode, canonical),
+          });
+        }
       },
     };
   },
