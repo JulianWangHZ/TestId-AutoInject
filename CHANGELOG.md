@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.8](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.7...v0.3.8) (2026-10-22)
+
+
+### Code Refactoring
+
+* **eslint:** share option schema and target matching across rules ([#35](https://github.com/JulianWangHZ/TestId-AutoInject/issues/35)) ([54bb78a](https://github.com/JulianWangHZ/TestId-AutoInject/commit/54bb78aef6060bcd456b7aaeec5a502ef6b3cee8))
+
 ## [0.3.7](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.6...v0.3.7) (2026-10-22)
 
 
