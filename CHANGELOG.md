@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.8...v0.4.0) (2026-11-12)
+
+
+### Features
+
+* **swc:** support every Next.js 16 minor from 16.0 to 16.5 ([#37](https://github.com/JulianWangHZ/TestId-AutoInject/issues/37)) ([932a882](https://github.com/JulianWangHZ/TestId-AutoInject/commit/932a882bcd75fa4369d2c8e1368c9ceb385e443e))
+
 ## [0.3.8](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.7...v0.3.8) (2026-10-22)
 
 
