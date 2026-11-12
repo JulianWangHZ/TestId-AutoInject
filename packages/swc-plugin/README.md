@@ -39,7 +39,15 @@ host was built with, or Next fails with `failed to invoke plugin` (ABI mismatch)
 | swc_core | Next.js | Notes |
 |---|---|---|
 | `=35.0.0` | **15.5.x** | Current pin. From `workspace.dependencies` in vercel/next.js@v15.5.9. |
-| 47+ | 16.1+ | Wasm plugins are backward-compatible from swc_core 47 (Nov 2025) — a single build then covers future Next versions. |
+| `=45.0.1` | 16.0 | [`../swc-plugin-16-0`](../swc-plugin-16-0), same source as this crate (pre-`Wtf8Atom` AST). |
+| `=54.0.0` | 16.1 – 16.2 | [`../swc-plugin-16`](../swc-plugin-16). |
+| `=73.0.0` | 16.3 | [`../swc-plugin-16-3`](../swc-plugin-16-3), same source as `swc-plugin-16`. |
+| `=79.0.0` | 16.4 | [`../swc-plugin-16-4`](../swc-plugin-16-4), same source as `swc-plugin-16`. |
+| `=84.0.1` | 16.5 | [`../swc-plugin-16-5`](../swc-plugin-16-5), same source as `swc-plugin-16`. |
+
+A wasm built against an older swc_core fails on a newer host with `Failed to
+deserialize program received from host`, so each AST-breaking Next minor needs
+its own build.
 
 To retarget: find the Next version's `swc_core` (its root `Cargo.toml`), update
 the pin in [`Cargo.toml`](Cargo.toml), and rebuild.

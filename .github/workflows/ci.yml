@@ -31,7 +31,11 @@ jobs:
         with:
           workspaces: |
             packages/swc-plugin
+            packages/swc-plugin-16-0
             packages/swc-plugin-16
+            packages/swc-plugin-16-3
+            packages/swc-plugin-16-4
+            packages/swc-plugin-16-5
       # 15.x engine (swc_core 35): id cross-check + wasm link.
       - name: cargo test (swc 15)
         working-directory: packages/swc-plugin
@@ -39,10 +43,38 @@ jobs:
       - name: build wasm (swc 15)
         working-directory: packages/swc-plugin
         run: cargo build --release --target wasm32-wasip1
-      # 16+ engine (swc_core 54): same, adapted to the newer AST API.
+      # Next 16.1-16.2 engine (swc_core 54): same, adapted to the newer AST API.
       - name: cargo test (swc 16)
         working-directory: packages/swc-plugin-16
         run: cargo test
       - name: build wasm (swc 16)
         working-directory: packages/swc-plugin-16
+        run: cargo build --release --target wasm32-wasip1
+
+      # Next 16.0 (swc_core 45): same source as swc-plugin.
+      - name: cargo test (swc 16.0)
+        working-directory: packages/swc-plugin-16-0
+        run: cargo test
+      - name: build wasm (swc 16.0)
+        working-directory: packages/swc-plugin-16-0
+        run: cargo build --release --target wasm32-wasip1
+
+      # Next 16.3 (73), 16.4 (79), 16.5 (84): same source as swc-plugin-16.
+      - name: cargo test (swc 16.3)
+        working-directory: packages/swc-plugin-16-3
+        run: cargo test
+      - name: build wasm (swc 16.3)
+        working-directory: packages/swc-plugin-16-3
+        run: cargo build --release --target wasm32-wasip1
+      - name: cargo test (swc 16.4)
+        working-directory: packages/swc-plugin-16-4
+        run: cargo test
+      - name: build wasm (swc 16.4)
+        working-directory: packages/swc-plugin-16-4
+        run: cargo build --release --target wasm32-wasip1
+      - name: cargo test (swc 16.5)
+        working-directory: packages/swc-plugin-16-5
+        run: cargo test
+      - name: build wasm (swc 16.5)
+        working-directory: packages/swc-plugin-16-5
         run: cargo build --release --target wasm32-wasip1

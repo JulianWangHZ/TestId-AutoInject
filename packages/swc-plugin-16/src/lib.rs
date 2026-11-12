@@ -15,6 +15,7 @@ mod slugify;
 use std::collections::{HashMap, HashSet};
 
 use serde::Deserialize;
+use swc_core::atoms::{Atom, Wtf8Atom};
 use swc_core::common::DUMMY_SP;
 use swc_core::ecma::ast::{
     Expr, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement,
@@ -104,6 +105,24 @@ fn attr_name_eq(name: &JSXAttrName, s: &str) -> bool {
     }
 }
 
+/// JSX text is `Atom` before swc_core 79 and `Wtf8Atom` from 79 on; this lets
+/// one source build against both.
+trait AtomText {
+    fn text(&self) -> String;
+}
+
+impl AtomText for Atom {
+    fn text(&self) -> String {
+        self.to_string()
+    }
+}
+
+impl AtomText for Wtf8Atom {
+    fn text(&self) -> String {
+        self.to_string_lossy().into_owned()
+    }
+}
+
 fn has_attr(open: &JSXOpeningElement, attr: &str) -> bool {
     open.attrs.iter().any(|a| {
         matches!(a, JSXAttrOrSpread::JSXAttr(x) if attr_name_eq(&x.name, attr))
@@ -148,7 +167,8 @@ fn find_label(open: &JSXOpeningElement, children: &[JSXElementChild]) -> Option<
     }
     for c in children {
         if let JSXElementChild::JSXText(t) = c {
-            let s = t.value.trim();
+            let value = t.value.text();
+            let s = value.trim();
             if !s.is_empty() {
                 return Some(s.to_string());
             }
