@@ -109,18 +109,28 @@ export default nextConfig;
 ```
 
 > `swc()` picks the wasm that matches your Next.js version automatically:
-> `plugin-16.wasm` (`swc_core 54`) for **Next 16+**, or `plugin-15.wasm`
-> (`swc_core 35`) for **Next 15.5.x** — the wasm's swc_core must match the host's
+>
+> | Next.js | wasm | host `swc_core` |
+> |---|---|---|
+> | 15.5.x | `plugin-15.wasm` | 35 |
+> | 16.0 | `plugin-16-0.wasm` | 45 |
+> | 16.1 – 16.2 | `plugin-16.wasm` | 54 / 57 |
+> | 16.3 | `plugin-16-3.wasm` | 73 |
+> | 16.4 | `plugin-16-4.wasm` | 79 |
+> | 16.5+ | `plugin-16-5.wasm` | 84 |
+>
+> The wasm's swc_core must match the host's
 > or Next throws `failed to invoke plugin`. Both ship prebuilt in the package, so
 > consumers need no Rust toolchain. The Babel engine above still covers React
 > Native / Expo (Metro uses Babel). All engines share the same id-derivation
 > logic, so ids are identical across them.
 
-> **Turbopack on Next 15:** during `next build --turbopack`, Next 15 reports
-> `development` (not `production`) as the env to SWC plugins, so an
-> `envs: ['production']` gate silently skips injection. Include
+> **Turbopack on Next 15 – 16.2:** during `next build --turbopack`, these
+> versions report `development` (not `production`) as the env to SWC plugins,
+> so an `envs: ['production']` gate silently skips injection. Include
 > `'development'` in `envs` if you want injection in Turbopack production
-> builds on Next 15. Next 16 reports the env correctly.
+> builds on these versions. Webpack builds, and Turbopack from Next 16.3 on,
+> report `production`.
 
 ### Vue 3 — Vite (`vite.config.ts`)
 

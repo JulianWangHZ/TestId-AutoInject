@@ -3,7 +3,7 @@ name = "testid-autoinject-swc-16"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "SWC plugin for testid-autoinject built against swc_core 54 (Next.js 16+). Sibling of ../swc-plugin (swc_core 35, Next 15.5.x)."
+description = "SWC plugin for testid-autoinject built against swc_core 54 (Next.js 16.1-16.2). Sibling of ../swc-plugin (swc_core 35, Next 15.5.x)."
 publish = false
 
 [lib]

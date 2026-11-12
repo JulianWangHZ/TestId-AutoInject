@@ -34,7 +34,11 @@
       "default": "./dist/vue/index.js"
     },
     "./swc/plugin-15.wasm": "./dist/swc/plugin-15.wasm",
-    "./swc/plugin-16.wasm": "./dist/swc/plugin-16.wasm"
+    "./swc/plugin-16-0.wasm": "./dist/swc/plugin-16-0.wasm",
+    "./swc/plugin-16.wasm": "./dist/swc/plugin-16.wasm",
+    "./swc/plugin-16-3.wasm": "./dist/swc/plugin-16-3.wasm",
+    "./swc/plugin-16-4.wasm": "./dist/swc/plugin-16-4.wasm",
+    "./swc/plugin-16-5.wasm": "./dist/swc/plugin-16-5.wasm"
   },
   "bin": {
     "testid-scan": "./dist/cli/scan.js"
@@ -44,10 +48,14 @@
   ],
   "scripts": {
     "build": "tsc",
-    "build:swc": "npm run build:swc15 && npm run build:swc16",
+    "build:swc": "npm run build:swc15 && npm run build:swc16-0 && npm run build:swc16 && npm run build:swc16-3 && npm run build:swc16-4 && npm run build:swc16-5",
     "build:swc15": "cd packages/swc-plugin && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc.wasm ../../dist/swc/plugin-15.wasm",
     "build:swc16": "cd packages/swc-plugin-16 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16.wasm ../../dist/swc/plugin-16.wasm",
-    "test:swc": "cd packages/swc-plugin && cargo test && cd ../swc-plugin-16 && cargo test",
+    "build:swc16-0": "cd packages/swc-plugin-16-0 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16_0.wasm ../../dist/swc/plugin-16-0.wasm",
+    "build:swc16-3": "cd packages/swc-plugin-16-3 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16_3.wasm ../../dist/swc/plugin-16-3.wasm",
+    "build:swc16-4": "cd packages/swc-plugin-16-4 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16_4.wasm ../../dist/swc/plugin-16-4.wasm",
+    "build:swc16-5": "cd packages/swc-plugin-16-5 && cargo build --release --target wasm32-wasip1 && mkdir -p ../../dist/swc && cp target/wasm32-wasip1/release/testid_autoinject_swc_16_5.wasm ../../dist/swc/plugin-16-5.wasm",
+    "test:swc": "cd packages/swc-plugin && cargo test && cd ../swc-plugin-16-0 && cargo test && cd ../swc-plugin-16 && cargo test && cd ../swc-plugin-16-3 && cargo test && cd ../swc-plugin-16-4 && cargo test && cd ../swc-plugin-16-5 && cargo test",
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test tests/*.test.ts",
     "scan": "node --import tsx src/cli/scan.ts",

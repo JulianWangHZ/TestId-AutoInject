@@ -1,0 +1,20 @@
+[package]
+name = "testid-autoinject-swc-16-0"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "SWC plugin for testid-autoinject built against swc_core 45.0.1 (Next.js 16.0). Shares source with ../swc-plugin."
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+path = "../swc-plugin/src/lib.rs"
+
+[dependencies]
+# swc_core 45.0.1 re-exports css_plugin_transform, which swc_plugin_macro 1.1.1
+# dropped. Pin the macro/proxy to the pair in vercel/next.js@v16.0.11 Cargo.lock.
+swc_core = { version = "=45.0.1", features = ["ecma_plugin_transform"] }
+swc_plugin_macro = "=1.1.0"
+swc_plugin_proxy = "=16.0.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
