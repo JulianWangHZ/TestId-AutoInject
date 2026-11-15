@@ -1,7 +1,7 @@
 # testid-autoinject
 
 Zero-touch, build-time injection of **stable** `testID` / `data-testid` for
-React Native (Expo), Next.js, and Vue 3 (Vite / Nuxt).
+React Native (Expo), Next.js, Vue 3 (Vite / Nuxt) and Angular.
 
 Frontend writes nothing. QA automation (Appium, Playwright, Detox, Maestro)
 gets deterministic selectors that survive refactors.
@@ -186,6 +186,51 @@ export default defineNuxtConfig({
   },
 });
 ```
+
+### Angular — Angular CLI (`ng serve` / `ng build` / `ng test`)
+
+The Angular compiler has no template-transform hook, and it reads templates
+inside a worker thread, so esbuild plugins never see them. Instead, preload the
+hook. It rewrites `templateUrl` files and inline `template:` strings as the
+compiler reads them. Sources on disk stay untouched, and no `angular.json`
+change is needed:
+
+```jsonc
+// package.json
+{
+  "scripts": {
+    "start:qa": "NODE_OPTIONS='--require testid-autoinject/angular/register' ng serve",
+    "build:qa": "NODE_OPTIONS='--require testid-autoinject/angular/register' ng build"
+  }
+}
+```
+
+`<button (click)="handleSubmit()">送出</button>` in
+`src/app/login/login.component.html` gets `login-submit-button`. Angular's
+`login/login.component.*` (or `login/login.*`) pair collapses to the `login`
+screen. The signals and their priority are the same as the other engines: a
+label attribute or static text first, then the intent from `(click)` /
+`(change)` / `(submit)` / `(input)` / `(ngSubmit)` / `(ngModelChange)`, then
+the CJK label verbatim.
+
+Options go in an optional `testid-autoinject.json` in the directory you run
+`ng` from: `attribute`, `targets`, `injectAll`, `stripDirs` and `cjkFallback`.
+
+Notes:
+
+- **Opt-in by loading.** The hook ignores `NODE_ENV` (the Angular CLI does not
+  set it). Ids are injected whenever the hook is preloaded, so use it only in
+  dev / QA scripts.
+- **Requires Node 20.19+ or 22.12+** (`require()` of the ESM-only
+  `@angular/compiler`). On an older Node, the hook warns once and leaves
+  templates unchanged.
+- **Manual values win.** A static `data-testid`, `[attr.data-testid]` or
+  `[data-testid]` keeps its value.
+- **Components** get the id on their host element (`<app-button>`), not on
+  the element inside them.
+- **`@for` / `*ngFor` rows share one id.** See
+  [Lists](#lists-rows-share-one-id).
+- **`emitMap` is not supported** for Angular yet.
 
 ## Babel options
 

@@ -1,7 +1,7 @@
 {
   "name": "testid-autoinject",
   "version": "0.4.0",
-  "description": "Zero-touch build-time injection of stable testID / data-testid for React Native (Expo) and Next.js. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
+  "description": "Zero-touch build-time injection of stable testID / data-testid for React Native (Expo), Next.js, Vue 3 and Angular. Frontend writes nothing; QA automation (Appium, Playwright) gets stable selectors.",
   "license": "MIT",
   "author": "",
   "repository": {
@@ -32,6 +32,14 @@
     "./vue": {
       "types": "./dist/vue/index.d.ts",
       "default": "./dist/vue/index.js"
+    },
+    "./angular": {
+      "types": "./dist/angular/index.d.ts",
+      "default": "./dist/angular/index.js"
+    },
+    "./angular/register": {
+      "types": "./dist/angular/register.d.ts",
+      "default": "./dist/angular/register.js"
     },
     "./swc/plugin-15.wasm": "./dist/swc/plugin-15.wasm",
     "./swc/plugin-16-0.wasm": "./dist/swc/plugin-16-0.wasm",
@@ -72,6 +80,7 @@
     "vue",
     "nuxt",
     "vite",
+    "angular",
     "appium",
     "playwright",
     "automation",
@@ -82,15 +91,23 @@
     "node": ">=18"
   },
   "peerDependencies": {
+    "@angular/compiler": ">=17.0.0",
     "@babel/core": ">=7.0.0",
     "eslint": ">=8.57.0",
+    "typescript": ">=5.0.0",
     "vue-eslint-parser": ">=9.0.0"
   },
   "peerDependenciesMeta": {
+    "@angular/compiler": {
+      "optional": true
+    },
     "@babel/core": {
       "optional": true
     },
     "eslint": {
+      "optional": true
+    },
+    "typescript": {
       "optional": true
     },
     "vue-eslint-parser": {
@@ -98,6 +115,7 @@
     }
   },
   "devDependencies": {
+    "@angular/compiler": "^22.2.6",
     "@babel/core": "^7.24.0",
     "@babel/plugin-syntax-jsx": "^7.24.0",
     "@types/babel__core": "^7.20.5",
