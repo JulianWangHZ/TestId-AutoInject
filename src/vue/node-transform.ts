@@ -9,6 +9,7 @@ import { deriveScreen, deriveBaseId } from '../id/derive';
 import { mineSignalFromSource } from '../id/handler-signal';
 import { configureMapOutput, recordMapping } from '../map/emit';
 import { DEFAULT_TARGETS } from '../babel-plugin';
+import { matchesTarget, templateElementName } from '../utils/tag-name';
 
 export interface VueInjectOptions {
   /** Attribute to inject. Default `data-testid`. */
@@ -45,14 +46,6 @@ const LABEL_ATTRS = ['aria-label', 'placeholder', 'title', 'label', 'name'];
 
 /** Template events, in priority order, most likely to name the intent. */
 const HANDLER_EVENTS = ['click', 'change', 'submit', 'input'];
-
-function kebabToPascal(tag: string): string {
-  return tag.replace(/(?:^|-)([a-z0-9])/g, (_, c: string) => c.toUpperCase());
-}
-
-function matchesTarget(tag: string, targets: Set<string>): boolean {
-  return targets.has(tag) || targets.has(kebabToPascal(tag));
-}
 
 function hasTestAttr(el: ElementNode, attribute: string): boolean {
   return el.props.some((p) => {
@@ -146,7 +139,7 @@ export function vueTestId(options: VueInjectOptions = {}): NodeTransform {
 
     // Components written kebab-case still deserve their PascalCase type
     // mapping (`van-button` -> `VanButton` -> `button`).
-    const elementName = el.tag.includes('-') ? kebabToPascal(el.tag) : el.tag;
+    const elementName = templateElementName(el.tag);
     const base = deriveBaseId({
       screen,
       elementName,

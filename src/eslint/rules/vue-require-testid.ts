@@ -4,13 +4,10 @@ import { deriveScreen, deriveBaseId } from '../../id/derive';
 import { mineSignalFromSource } from '../../id/handler-signal';
 import { DEFAULT_TARGETS } from '../../id/targets';
 import { stringList, testidOptionsSchema } from './shared';
+import { matchesTarget, templateElementName } from '../../utils/tag-name';
 
 const LABEL_ATTRS = ['aria-label', 'placeholder', 'title', 'label', 'name'];
 const HANDLER_EVENTS = ['click', 'change', 'submit', 'input'];
-
-function kebabToPascal(tag: string): string {
-  return tag.replace(/(?:^|-)([a-z0-9])/g, (_, c: string) => c.toUpperCase());
-}
 
 function staticAttr(node: any, name: string): string | null {
   for (const attr of node.startTag.attributes) {
@@ -102,10 +99,10 @@ export const vueRequireTestid: Rule.RuleModule = {
     return services.defineTemplateBodyVisitor({
       VElement(node: any) {
         const tag: string = node.rawName;
-        if (!targets.has(tag) && !targets.has(kebabToPascal(tag))) return;
+        if (!matchesTarget(tag, targets)) return;
         if (hasTestAttr(node, attribute)) return;
 
-        const elementName = tag.includes('-') ? kebabToPascal(tag) : tag;
+        const elementName = templateElementName(tag);
         const base = deriveBaseId({
           screen,
           elementName,
