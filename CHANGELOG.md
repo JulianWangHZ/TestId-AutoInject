@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.4.0...v0.5.0) (2026-11-15)
+
+
+### Features
+
+* **angular:** build-time data-testid injection for Angular templates ([#39](https://github.com/JulianWangHZ/TestId-AutoInject/issues/39)) ([a3b6619](https://github.com/JulianWangHZ/TestId-AutoInject/commit/a3b6619ab11b590336d8534e290c5f55abac68b3))
+
 ## [0.4.0](https://github.com/JulianWangHZ/TestId-AutoInject/compare/v0.3.8...v0.4.0) (2026-11-12)
 
 
